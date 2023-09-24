@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      target: app_php_dev
+    volumes:
+      - ./:/srv/app
+      - ./docker/php/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+    environment:
+      XDEBUG_MODE: "${XDEBUG_MODE:-develop,debug}"
+      XDEBUG_TRIGGER: "xdebug"

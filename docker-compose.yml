@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      target: app_php
+      args: {}
+    restart: unless-stopped
+    volumes:
+      - php_socket:/var/run/php
+    environment: {}
+    depends_on: {}
+
+volumes:
+  php_socket:
