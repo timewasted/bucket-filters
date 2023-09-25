@@ -22,3 +22,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\TriBucketFilterEqualWidth:
+        public: true
+        arguments:
+            $bucketStart: '%env(TRI_BUCKET_FILTER_EQUAL_WIDTH_BUCKET_START)%'
+            $bucketWidth: '%env(TRI_BUCKET_FILTER_EQUAL_WIDTH_BUCKET_WIDTH)%'
