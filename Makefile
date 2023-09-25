@@ -28,3 +28,6 @@ test-unit:
 
 up:
 	@docker compose up -d
+
+filter:
+	@${DOCKER_EXEC_APP} ./bin/console app:filter --method $(method) --values $(values)
