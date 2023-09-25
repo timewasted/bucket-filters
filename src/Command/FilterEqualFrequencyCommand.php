@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use App\Service\TriBucketFilterEqualFrequency;
@@ -34,9 +36,9 @@ class FilterEqualFrequencyCommand extends Command implements ServiceSubscriberIn
 
         /** @psalm-suppress MixedArgument */
         $output->writeln([
-            'Low:    ' . implode(', ', $filtered[TriBucketFilterEqualFrequency::BUCKET_LOW]),
-            'Medium: ' . implode(', ', $filtered[TriBucketFilterEqualFrequency::BUCKET_MEDIUM]),
-            'High:   ' . implode(', ', $filtered[TriBucketFilterEqualFrequency::BUCKET_HIGH]),
+            'Low:    '.implode(', ', $filtered[TriBucketFilterEqualFrequency::BUCKET_LOW]),
+            'Medium: '.implode(', ', $filtered[TriBucketFilterEqualFrequency::BUCKET_MEDIUM]),
+            'High:   '.implode(', ', $filtered[TriBucketFilterEqualFrequency::BUCKET_HIGH]),
         ]);
 
         return self::SUCCESS;

@@ -18,22 +18,42 @@ use Symfony\Contracts\Service\ServiceSubscriberTrait;
 /**
  * @psalm-suppress PropertyNotSetInConstructor
  */
-#[AsCommand(name: 'app:filter:equal-width')]
-class FilterEqualWidthCommand extends Command implements ServiceSubscriberInterface
+#[AsCommand(name: 'app:filter')]
+class FilterCommand extends Command implements ServiceSubscriberInterface
 {
     use ServiceSubscriberTrait;
+
+    private const SUPPORTED_FILTERS = [
+        'equal-frequency',
+        'equal-width',
+    ];
 
     protected function configure(): void
     {
         $this
+            ->addOption('method', null, InputOption::VALUE_REQUIRED, 'The filter method to use, which must be one of '.implode(', ', self::SUPPORTED_FILTERS))
             ->addOption('values', null, InputOption::VALUE_REQUIRED, 'The comma separated list of values to be filtered')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $method = (string) $input->getOption('method');
+        if (!in_array($method, self::SUPPORTED_FILTERS)) {
+            throw new \InvalidArgumentException(sprintf('Unsupported filter method "%s", must be one of %s', $method, implode(', ', self::SUPPORTED_FILTERS)));
+        }
         $values = (string) $input->getOption('values');
-        $filtered = $this->getFilter()->filter(explode(',', $values));
+
+        switch ($method) {
+            case 'equal-frequency':
+                $filtered = $this->getFilterFrequency()->filter(explode(',', $values));
+                break;
+            case 'equal-width':
+                $filtered = $this->getFilterWidth()->filter(explode(',', $values));
+                break;
+            default:
+                throw new \LogicException('Failed to handle all possible filter methods');
+        }
 
         /** @psalm-suppress MixedArgument */
         $output->writeln([
@@ -47,7 +67,15 @@ class FilterEqualWidthCommand extends Command implements ServiceSubscriberInterf
 
     /** @psalm-suppress MixedInferredReturnType */
     #[SubscribedService]
-    private function getFilter(): TriBucketFilterEqualWidth
+    private function getFilterFrequency(): TriBucketFilterEqualFrequency
+    {
+        /** @psalm-suppress MixedReturnStatement */
+        return $this->container->get(__METHOD__);
+    }
+
+    /** @psalm-suppress MixedInferredReturnType */
+    #[SubscribedService]
+    private function getFilterWidth(): TriBucketFilterEqualWidth
     {
         /** @psalm-suppress MixedReturnStatement */
         return $this->container->get(__METHOD__);
